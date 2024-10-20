@@ -7,7 +7,7 @@ unvisit--保留，再看一会
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
+#include <windows.h>
 //#define DEBUG
 
 #define MAX 50 
@@ -319,13 +319,26 @@ bool backtrack( Garden garden,Connector temp) {
 }
 int main() {
     int solution_exist ;
+    //计时开始double run_time;
+	double run_time;
+	LARGE_INTEGER time_start;	//开始时间
+	LARGE_INTEGER time_over;	//结束时间
+	double dqFreq;		//计时器频率
+	LARGE_INTEGER f;	//计时器频率
+	QueryPerformanceFrequency(&f);
+	dqFreq=(double)f.QuadPart;
+	QueryPerformanceCounter(&time_start);	//计时开始
+    //初始化
     Garden garden = InitGarden();
-    // 从第一个连接器开始回溯
+    // 从第一个连接器开始回溯：
     solution_exist=backtrack(garden,FindNext(garden));
     if(solution_exist)
         Print(garden);
     else
         printf("no solution\n");
-    
+    QueryPerformanceCounter(&time_over);	//计时结束
+	run_time=1000000*(time_over.QuadPart-time_start.QuadPart)/dqFreq;
+	//乘以1000000把单位由秒化为微秒，精度为1000 000/（cpu主频）微秒
+	printf("\nrun_time:%f us \n",run_time);
     return 0;
 }
